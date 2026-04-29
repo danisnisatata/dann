@@ -1,6 +1,9 @@
 {
   "functions": {
-    "api/upload.js": { "maxDuration": 10 },
-    "api/key.js": { "maxDuration": 10 }
-  }
+    "api/upload.js": {
+      "maxDuration": 10
+    }
+  },
+  "buildCommand": "npm install",
+  "installCommand": "npm install"
 }
