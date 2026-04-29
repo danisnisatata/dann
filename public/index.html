@@ -1,293 +1,388 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>Uploader</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-            font-family: 'Inter', system-ui, sans-serif;
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: #f8fafc;
+            color: #0f172a;
+            padding: 24px;
             min-height: 100vh;
             display: flex;
+            align-items: center;
             justify-content: center;
-            align-items: center;
-            padding: 20px;
         }
-        .card {
-            background: rgba(255,255,255,0.05);
-            backdrop-filter: blur(10px);
-            border-radius: 32px;
-            padding: 40px;
-            max-width: 550px;
+
+        /* Layout Container */
+        .container {
+            max-width: 640px;
             width: 100%;
-            border: 1px solid rgba(255,255,255,0.1);
+            margin: 0 auto;
         }
-        h1 {
-            color: white;
-            font-size: 28px;
+
+        /* Card Utama */
+        .card {
+            background: #ffffff;
+            border-radius: 28px;
+            box-shadow: 0 20px 35px -10px rgba(0, 0, 0, 0.05), 0 0 0 1px rgba(0, 0, 0, 0.02);
+            overflow: hidden;
+            transition: all 0.2s ease;
+        }
+
+        /* Header */
+        .card-header {
+            padding: 32px 32px 0 32px;
+        }
+
+        .card-header h1 {
+            font-size: 1.85rem;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            color: #0f172a;
             margin-bottom: 8px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
         }
-        .sub {
-            color: #888;
-            margin-bottom: 32px;
-            font-size: 14px;
+
+        .card-header p {
+            color: #475569;
+            font-size: 0.9rem;
+            line-height: 1.5;
         }
-        .box {
-            background: rgba(0,0,0,0.3);
-            border: 2px dashed #3b82f6;
+
+        /* Divider */
+        .divider {
+            height: 1px;
+            background: #eef2ff;
+            margin: 24px 0;
+        }
+
+        /* Body Card */
+        .card-body {
+            padding: 0 32px 32px 32px;
+        }
+
+        /* Dropzone */
+        .dropzone {
+            background: #f8fafc;
+            border: 2px dashed #cbd5e1;
             border-radius: 20px;
-            padding: 40px;
+            padding: 48px 24px;
             text-align: center;
             cursor: pointer;
-            transition: all 0.2s;
-            margin-bottom: 24px;
+            transition: all 0.2s ease;
+            margin-bottom: 28px;
         }
-        .box.drag { background: rgba(59,130,246,0.1); border-color: #60a5fa; }
-        .box p { color: #94a3b8; }
+
+        .dropzone.drag-over {
+            border-color: #3b82f6;
+            background: #eff6ff;
+        }
+
+        .dropzone-icon {
+            font-size: 2.5rem;
+            margin-bottom: 12px;
+            opacity: 0.7;
+        }
+
+        .dropzone-title {
+            font-weight: 500;
+            color: #1e293b;
+            margin-bottom: 6px;
+        }
+
+        .dropzone-sub {
+            font-size: 0.8rem;
+            color: #64748b;
+        }
+
+        /* Preview Area */
+        .preview-area {
+            margin-top: 16px;
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .preview-image, .preview-video {
+            max-width: 100px;
+            max-height: 100px;
+            border-radius: 12px;
+            object-fit: cover;
+            border: 1px solid #e2e8f0;
+            background: #f1f5f9;
+        }
+
+        .file-info {
+            font-size: 0.8rem;
+            color: #475569;
+            background: #f1f5f9;
+            padding: 6px 12px;
+            border-radius: 40px;
+        }
+
+        /* Button */
         .btn {
-            background: #3b82f6;
+            width: 100%;
+            background: #0f172a;
             color: white;
             border: none;
-            padding: 14px 24px;
-            border-radius: 40px;
-            font-weight: 600;
+            padding: 14px;
+            border-radius: 60px;
+            font-size: 0.95rem;
+            font-weight: 500;
             cursor: pointer;
-            width: 100%;
-            font-size: 16px;
-            transition: background 0.2s;
+            transition: background 0.2s ease;
+            margin-bottom: 24px;
         }
-        .btn:disabled { background: #4b5563; cursor: not-allowed; }
-        .btn-secondary {
-            background: rgba(255,255,255,0.1);
-            margin-top: 12px;
+
+        .btn:hover {
+            background: #1e293b;
         }
-        .input-group {
-            margin-bottom: 20px;
+
+        .btn:disabled {
+            background: #94a3b8;
+            cursor: not-allowed;
         }
-        .input-group label {
-            display: block;
-            color: #94a3b8;
-            margin-bottom: 8px;
-            font-size: 14px;
-        }
-        .input-group input {
-            width: 100%;
-            padding: 12px 16px;
-            background: rgba(0,0,0,0.3);
-            border: 1px solid #334155;
-            border-radius: 12px;
-            color: white;
-            font-family: monospace;
-        }
-        .api-card {
-            background: rgba(0,0,0,0.4);
-            border-radius: 16px;
-            padding: 16px;
-            margin: 20px 0;
-        }
-        .api-key {
-            font-family: monospace;
-            background: #0f0f0f;
-            padding: 12px;
-            border-radius: 12px;
-            color: #10b981;
-            word-break: break-all;
-            font-size: 12px;
-        }
-        .result {
-            margin-top: 20px;
-            padding: 16px;
-            background: rgba(0,0,0,0.3);
-            border-radius: 16px;
+
+        /* Result Box */
+        .result-box {
+            background: #f1f5f9;
+            border-radius: 20px;
+            padding: 20px;
             display: none;
         }
-        .result a { color: #3b82f6; text-decoration: none; word-break: break-all; }
-        .error { color: #ef4444; }
-        .success { color: #10b981; }
-        .flex { display: flex; gap: 12px; }
-        .copy-btn {
-            background: #334155;
-            padding: 8px 16px;
-            border-radius: 8px;
-            font-size: 12px;
-            cursor: pointer;
+
+        .result-success {
+            color: #0f172a;
+            word-break: break-all;
+        }
+
+        .result-success a {
+            color: #3b82f6;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .result-success a:hover {
+            text-decoration: underline;
+        }
+
+        .result-error {
+            color: #dc2626;
+        }
+
+        /* Loading Spinner */
+        .spinner {
+            display: inline-block;
+            width: 18px;
+            height: 18px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 0.6s linear infinite;
+            vertical-align: middle;
+            margin-right: 8px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 24px;
+            text-align: center;
+            font-size: 0.75rem;
+            color: #94a3b8;
+        }
+
+        /* Responsive */
+        @media (max-width: 500px) {
+            body { padding: 16px; }
+            .card-header, .card-body { padding-left: 20px; padding-right: 20px; }
+            .dropzone { padding: 32px 16px; }
         }
     </style>
 </head>
 <body>
-<div class="card">
-    <h1>📸 Uploader</h1>
-    <div class="sub">Upload gambar, dapet link permanen</div>
-    
-    <div id="apiSection">
-        <div class="api-card">
-            <div style="color:#94a3b8; margin-bottom: 8px;">🔑 API Key Kamu</div>
-            <div id="apiKeyDisplay" class="api-key" style="cursor: pointer;" onclick="copyApiKey()">Belum punya API Key</div>
-            <div class="flex" style="margin-top: 12px;">
-                <button id="generateBtn" class="btn" style="margin:0;">✨ Generate Baru</button>
-                <button id="checkBtn" class="btn btn-secondary" style="margin:0; background:#334155;">🔍 Cek</button>
+
+<div class="container">
+    <div class="card">
+        <div class="card-header">
+            <h1>Uploader</h1>
+            <p>Upload gambar dan video Anda, dapatkan tautan permanen yang siap dibagikan.</p>
+        </div>
+        <div class="divider"></div>
+        <div class="card-body">
+            <!-- Dropzone -->
+            <div id="dropzone" class="dropzone">
+                <div class="dropzone-icon">📁</div>
+                <div class="dropzone-title">Drag & drop file disini</div>
+                <div class="dropzone-sub">atau klik untuk memilih file</div>
+                <div id="preview" class="preview-area"></div>
             </div>
+            <input type="file" id="fileInput" style="display:none;" accept="image/*,video/*">
+
+            <!-- Upload Button -->
+            <button id="uploadBtn" class="btn">Upload</button>
+
+            <!-- Result Area -->
+            <div id="result" class="result-box"></div>
         </div>
     </div>
-    
-    <div class="box" id="dropzone">
-        <p>📂 Drag & drop gambar disini</p>
-        <p style="font-size:12px; margin-top:8px;">atau klik untuk pilih file</p>
+    <div class="footer">
+        Powered by ImgBB • API Key internal
     </div>
-    <input type="file" id="fileInput" style="display:none;" accept="image/*">
-    <button id="uploadBtn" class="btn" disabled>⬆ Upload</button>
-    
-    <div id="result" class="result"></div>
 </div>
 
 <script>
-    let currentApiKey = localStorage.getItem('apiKey');
-    let selectedFile = null;
-    
-    // DOM elements
-    const apiKeyDisplay = document.getElementById('apiKeyDisplay');
-    const generateBtn = document.getElementById('generateBtn');
-    const checkBtn = document.getElementById('checkBtn');
-    const uploadBtn = document.getElementById('uploadBtn');
+    // --- Konfigurasi
+    const API_KEY = 'gantengdann-static-key-2024';
+    const API_ENDPOINT = '/api/upload';
+
+    // --- DOM Elements
     const dropzone = document.getElementById('dropzone');
     const fileInput = document.getElementById('fileInput');
+    const uploadBtn = document.getElementById('uploadBtn');
     const resultDiv = document.getElementById('result');
-    
-    // Load API Key dari localStorage
-    if (currentApiKey) {
-        apiKeyDisplay.innerText = currentApiKey;
-        uploadBtn.disabled = false;
-        checkApiKey();
+    const previewArea = document.getElementById('preview');
+
+    let selectedFile = null;
+
+    // --- Helper: Preview
+    function showPreview(file) {
+        previewArea.innerHTML = '';
+        if (!file) return;
+
+        if (file.type.startsWith('image/')) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const img = document.createElement('img');
+                img.src = e.target.result;
+                img.classList.add('preview-image');
+                img.alt = 'Preview';
+                previewArea.appendChild(img);
+            };
+            reader.readAsDataURL(file);
+        } else if (file.type.startsWith('video/')) {
+            const video = document.createElement('video');
+            video.src = URL.createObjectURL(file);
+            video.classList.add('preview-video');
+            video.controls = true;
+            video.muted = true;
+            previewArea.appendChild(video);
+        }
+
+        const info = document.createElement('div');
+        info.className = 'file-info';
+        info.textContent = `${file.name} (${(file.size / 1024).toFixed(1)} KB)`;
+        previewArea.appendChild(info);
     }
-    
-    // Generate API Key
-    generateBtn.onclick = async () => {
+
+    // --- Helper: Reset UI
+    function resetUI() {
         resultDiv.style.display = 'none';
-        try {
-            const res = await fetch('/api/key', { method: 'POST' });
-            const data = await res.json();
-            if (data.success) {
-                currentApiKey = data.apiKey;
-                localStorage.setItem('apiKey', currentApiKey);
-                apiKeyDisplay.innerText = currentApiKey;
-                uploadBtn.disabled = false;
-                showResult('✅ API Key berhasil dibuat!', 'success');
-            } else {
-                showResult('❌ Gagal: ' + data.error, 'error');
-            }
-        } catch (err) {
-            showResult('❌ Error: ' + err.message, 'error');
+        resultDiv.innerHTML = '';
+        uploadBtn.disabled = false;
+        uploadBtn.textContent = 'Upload';
+    }
+
+    // --- Handle Upload
+    async function uploadFile(file) {
+        if (!file) {
+            alert('Pilih file terlebih dahulu.');
+            return false;
         }
-    };
-    
-    // Cek API Key
-    async function checkApiKey() {
-        if (!currentApiKey) return;
+
+        uploadBtn.disabled = true;
+        uploadBtn.innerHTML = '<span class="spinner"></span> Mengirim...';
+        resultDiv.style.display = 'block';
+        resultDiv.innerHTML = '<span>⏳ Mengirim ke server...</span>';
+        resultDiv.className = 'result-box';
+
+        const formData = new FormData();
+        formData.append('file', file);
+
         try {
-            const res = await fetch('/api/key', {
-                headers: { 'X-API-Key': currentApiKey }
+            const response = await fetch(API_ENDPOINT, {
+                method: 'POST',
+                headers: { 'X-API-Key': API_KEY },
+                body: formData
             });
-            if (res.status === 200) {
-                const data = await res.json();
-                apiKeyDisplay.innerText = currentApiKey;
-                uploadBtn.disabled = false;
+
+            const data = await response.json();
+
+            if (data.success) {
+                resultDiv.innerHTML = `
+                    <div class="result-success">
+                        ✅ Upload berhasil.<br><br>
+                        <strong>Tautan permanen:</strong><br>
+                        <a href="${data.url}" target="_blank">${data.url}</a>
+                    </div>
+                `;
+                resultDiv.className = 'result-box';
+                return true;
             } else {
-                localStorage.removeItem('apiKey');
-                currentApiKey = null;
-                apiKeyDisplay.innerText = '❌ API Key tidak valid, generate baru';
-                uploadBtn.disabled = true;
+                throw new Error(data.error || 'Upload gagal');
             }
         } catch (err) {
-            console.log(err);
+            resultDiv.innerHTML = `<div class="result-error">❌ Gagal: ${err.message}</div>`;
+            resultDiv.className = 'result-box';
+            return false;
+        } finally {
+            uploadBtn.disabled = false;
+            uploadBtn.textContent = 'Upload';
         }
     }
-    
-    checkBtn.onclick = checkApiKey;
-    
-    // Copy API Key
-    window.copyApiKey = () => {
-        if (currentApiKey) {
-            navigator.clipboard.writeText(currentApiKey);
-            showResult('📋 API Key disalin!', 'success');
-            setTimeout(() => resultDiv.style.display = 'none', 2000);
-        }
-    };
-    
-    // Dropzone
-    dropzone.onclick = () => fileInput.click();
-    dropzone.ondragover = (e) => { e.preventDefault(); dropzone.classList.add('drag'); };
-    dropzone.ondragleave = () => dropzone.classList.remove('drag');
-    dropzone.ondrop = (e) => {
+
+    // --- Event Listeners
+    dropzone.addEventListener('click', () => fileInput.click());
+
+    dropzone.addEventListener('dragover', (e) => {
         e.preventDefault();
-        dropzone.classList.remove('drag');
+        dropzone.classList.add('drag-over');
+    });
+
+    dropzone.addEventListener('dragleave', () => {
+        dropzone.classList.remove('drag-over');
+    });
+
+    dropzone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropzone.classList.remove('drag-over');
         if (e.dataTransfer.files.length) {
             selectedFile = e.dataTransfer.files[0];
             fileInput.files = e.dataTransfer.files;
-            showResult(`📁 ${selectedFile.name} siap upload`, 'success');
+            showPreview(selectedFile);
+            resetUI();
         }
-    };
-    fileInput.onchange = (e) => {
+    });
+
+    fileInput.addEventListener('change', (e) => {
         if (e.target.files.length) {
             selectedFile = e.target.files[0];
-            showResult(`📁 ${selectedFile.name} siap upload`, 'success');
+            showPreview(selectedFile);
+            resetUI();
         }
-    };
-    
-    // Upload
-    uploadBtn.onclick = async () => {
-        if (!currentApiKey) return showResult('🔑 Belum punya API Key, generate dulu!', 'error');
-        if (!selectedFile) return showResult('📂 Pilih gambar dulu!', 'error');
-        
-        uploadBtn.disabled = true;
-        uploadBtn.innerText = '⏳ Uploading...';
-        resultDiv.style.display = 'block';
-        resultDiv.innerHTML = '<span>⏳ Mengirim...</span>';
-        
-        const formData = new FormData();
-        formData.append('file', selectedFile);
-        
-        try {
-            const res = await fetch('/api/upload', {
-                method: 'POST',
-                headers: { 'X-API-Key': currentApiKey },
-                body: formData
-            });
-            const data = await res.json();
-            
-            if (data.success) {
-                resultDiv.innerHTML = `
-                    <div class="success">✅ Upload berhasil!</div>
-                    <div style="margin-top:12px;"><strong>🔗 Link:</strong><br>
-                    <a href="${data.url}" target="_blank">${data.url}</a></div>
-                    <div style="margin-top:8px; font-size:12px; color:#666;">📊 Total upload: ${data.usage}</div>
-                `;
-                selectedFile = null;
-                fileInput.value = '';
-            } else {
-                resultDiv.innerHTML = `<div class="error">❌ ${data.error}</div>`;
-            }
-        } catch (err) {
-            resultDiv.innerHTML = `<div class="error">⚠️ Error: ${err.message}</div>`;
-        } finally {
-            uploadBtn.disabled = false;
-            uploadBtn.innerText = '⬆ Upload';
+    });
+
+    uploadBtn.addEventListener('click', () => {
+        if (selectedFile) {
+            uploadFile(selectedFile);
+        } else {
+            alert('Tidak ada file yang dipilih.');
         }
-    };
-    
-    function showResult(msg, type) {
-        resultDiv.style.display = 'block';
-        resultDiv.innerHTML = `<div class="${type}">${msg}</div>`;
-        setTimeout(() => {
-            if (resultDiv.innerHTML === `<div class="${type}">${msg}</div>`) {
-                resultDiv.style.display = 'none';
-            }
-        }, 3000);
-    }
+    });
 </script>
 </body>
 </html>
